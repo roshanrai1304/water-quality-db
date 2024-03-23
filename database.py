@@ -1,3 +1,10 @@
+
+
+"""
+ The file contains all the necessary information required to connect to the Postgre Database 
+ with all the necessary libraries importted and the credentials imported from the config.py file 
+"""
+
 import sqlalchemy as _sql
 import sqlalchemy.ext.declarative as _declarative
 import sqlalchemy.orm as _orm

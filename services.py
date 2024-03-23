@@ -1,3 +1,9 @@
+
+
+"""
+The files contain all the support functions required for the api routes also this file contains the database session
+"""
+
 from typing import TYPE_CHECKING, List, Dict, Any
 from sqlalchemy import between, or_, text, func
 from datetime import datetime
@@ -18,10 +24,16 @@ if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
 
+"""
+function to make tables 
+"""
 def _add_tables():
     return _database.Base.metadata.create_all(bind=_database.engine)
 
 
+"""
+    Function used for getting the database
+"""
 def get_db():
     db = _database.SessionLocal()
     try:
@@ -31,7 +43,9 @@ def get_db():
         
 
 
-
+"""
+    Support function used for creating user
+"""
 async def create_user(
     user: _schemas.User, db: "Session"
 ): 
@@ -52,7 +66,12 @@ async def create_user(
     db.refresh(new_user)
     
     return {"message": f"Sucessfully created user {new_user.full_name}"}
-    
+
+
+
+"""
+    Support function for login user
+"""    
 async def login_user(
     userdetails: OAuth2PasswordRequestForm,
     db: "Session"
@@ -71,6 +90,11 @@ async def login_user(
     access_token = _oauth.create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
     
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+"""
+Support function used for getting current user
+"""
 
 async def get_current_user(token: str = Depends(_oauth.oauth2_scheme), db: "Session" = Depends(get_db)):
     credential_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -92,6 +116,8 @@ async def get_current_user(token: str = Depends(_oauth.oauth2_scheme), db: "Sess
         raise credential_exception
 
     return user
+
+
 
 async def get_current_active_user(current_user: _schemas.UserCurrent = Depends(get_current_user)):
     

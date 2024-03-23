@@ -1,6 +1,17 @@
+
+"""
+The file contains the schemas of two table that I have used for making api's, one is for storing 
+user information and other is used for storing the Observation's 
+    
+"""
+
 from sqlalchemy import ARRAY, Column, Float, Integer, String, DateTime, Boolean
 import database as _database
 
+
+"""
+Schema defined for the Water Quality Observation Table    
+"""
 class WaterQualityObservationDB(_database.Base):
     __tablename__ = 'observations'
 
@@ -13,7 +24,11 @@ class WaterQualityObservationDB(_database.Base):
     conductivity = Column(Float)
     DO = Column(Float)
     contaminants = Column(ARRAY(String))
-    
+
+
+"""
+Schema defined for the user information table
+"""   
 class User(_database.Base):
     
     __tablename__ = "users"

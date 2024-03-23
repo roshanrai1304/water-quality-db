@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 
-RUN git clone https://github.com/yourusername/yourrepository.git /app
+RUN git clone https://github.com/roshanrai1304/water-quality-db.git /app
 
 COPY config.py /app/config.py
 
