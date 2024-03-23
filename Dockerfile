@@ -10,13 +10,13 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy packages required from local requirements file to Docker image requirements file
-RUN git clone https://github.com/roshanrai1304/water-quality-db.git
+
+RUN git clone https://github.com/yourusername/yourrepository.git /app
+
+COPY config.py /app/config.py
 
 RUN pip3 install -r requirements.txt
 
-EXPOSE 8501
+EXPOSE 3000
 
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
-
-ENTRYPOINT [ "uvicorn", "main:app", "--reload", "--server.address=0.0.0.0"]
+CMD [ "uvicorn", "main:app", "--host=0.0.0.0", "--port=3000" ]
