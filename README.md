@@ -10,3 +10,9 @@ The execution of project is by following steps:
   4. Making the route's for different action of the api such as CRUD.
   5. Dockerize the whole container.
   6. Emulate it using localstack for ec2 instance
+
+To run the repo use the command in order:
+  1. docker pull roshanrai1304/water-quality-api:0.0.1.RELEASE
+  2. docker run -d -p 3000:3000 roshanrai1304/water-quality-api:0.0.1.RELEASE
+
+After running the command you can see you the api on https://localhost:3000/docs
