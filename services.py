@@ -33,6 +33,9 @@ def _add_tables():
 
 """
     Function used for getting the database
+    
+    Returns:
+     databse
 """
 def get_db():
     db = _database.SessionLocal()
@@ -45,6 +48,9 @@ def get_db():
 
 """
     Support function used for creating user
+    
+    Return
+     string: successful creatiuon of the user
 """
 async def create_user(
     user: _schemas.User, db: "Session"
@@ -71,6 +77,9 @@ async def create_user(
 
 """
     Support function for login user
+    
+    Return
+      string
 """    
 async def login_user(
     userdetails: OAuth2PasswordRequestForm,
@@ -94,6 +103,16 @@ async def login_user(
 
 """
 Support function used for getting current user
+  
+  Argeument
+   token: Token Schema
+  
+  Raise
+    credential exception
+    
+  Return
+   User deails : User Schema
+
 """
 
 async def get_current_user(token: str = Depends(_oauth.oauth2_scheme), db: "Session" = Depends(get_db)):
@@ -133,7 +152,15 @@ async def get_user(
     return current_user
     
     
+"""
+Function to create observation to create an entry in Observation table
 
+Argument:
+  observation: WaterQuality Schema 
+  
+ Return:
+  String
+"""
 
 async def create_observation(
     observation: _schemas.WaterQuality, db: "Session"
@@ -154,17 +181,52 @@ async def create_observation(
     return {"message": "Observation created Successfully"}
 
 
+
+"""
+Function to get all observation from the table
+
+Return:
+  records: List    
+"""
 async def get_all_observation(db: "Session") :
     records = db.query(_models.WaterQualityObservationDB).all()
     return records  
+
+"""
+  The Function is used to get an observation by id.    
+
+    Argument:
+      observation_id: int
+      
+    Returns:
+        WaterQuality: Pydantic model
+"""
 
 async def get_observation_by_id(observation_id: int, db: "Session"):
     record = db.query(_models.WaterQualityObservationDB).filter(_models.WaterQualityObservationDB.id == observation_id).first()
     return record
 
+
+"""
+  The Function is used to delete an observation by id.    
+
+    Argument:
+      observation_id: int
+      
+"""
 async def delete_observation_by_id(observation: _models.WaterQualityObservationDB, db: "Session"):
     db.delete(observation)
     db.commit()
+    
+"""
+  The api Function is used to update an observation by id.    
+
+    Argument:
+      observation_id: int
+      
+    Returns:
+        string
+"""
     
 async def update_contact_by_id(
     record: _models.WaterQualityObservationDB, observation_data: _schemas.BaseWaterQuality, db: "Session"
@@ -184,6 +246,17 @@ async def update_contact_by_id(
     
     return {"message": f"Observation for {id} updated Successfully"}
 
+"""
+The function is used to find the entries from the observation table which are closed to the 
+given latitude and longitude or location
+
+ Body:
+   Location: Pydantic Model with consisting of latitude and longitude
+   
+ Returns:
+  BaseWaterQuality: Pydantic Model
+
+""" 
 async def locate_observation(
     location_data: _schemas.Location, db: "Session"
 ):
@@ -199,8 +272,18 @@ async def locate_observation(
         return closest_observation
     else:
         return None
-    
-    
+   
+
+"""
+The function is used to find the entries from the observation table which are in the given date range
+
+ Body:
+   start_date, end_date
+   
+ Returns:
+  List[BaseWaterQuality]: List of pydantic model
+
+"""      
 async def find_observations_date_range(
     start_date: str, end_date: str, db: "Session"
 ):  
@@ -210,33 +293,66 @@ async def find_observations_date_range(
     
     return observations
 
+
+"""
+The function is used to find the entries from the observation table with the given parameters
+
+ Body:
+   Dict[type of value's needed, contaminant]
+   
+ Returns:
+  List[BaseWaterQuality]: List of pydantic model
+
+""" 
 async def find_observation_parameter(
     params: Dict[str, Any], db: "Session"
 ):
     
     query_filters = []
     for key, value in params.items():
+        
+        # minumum pH 
         if key == "min_pH":
             query_filters.append(_models.WaterQualityObservationDB.latitude >= value)
+            
+        # maximum pH
         elif key == "max_pH":
             query_filters.append(_models.WaterQualityObservationDB.pH <= value)
+            
+        # Exact pH
         elif key == "pH":
             query_filters.append(_models.WaterQualityObservationDB.pH == value)
+            
+        # minimum conductivity
         elif key == "min_conductivity":
             query_filters.append(_models.WaterQualityObservationDB.conductivity >= value)
+            
+        # maximum conductivity
         elif key == "max_conductivity":
             query_filters.append(_models.WaterQualityObservationDB.conductivity <= value)
+            
+        # Exact conductivity
         elif key == "conductivity":
             query_filters.append(_models.WaterQualityObservationDB.conductivity == value)
+            
+        # min DO
         elif key == "min_DO":
             query_filters.append(_models.WaterQualityObservationDB.DO >= value)
+            
+        # max DO
         elif key == "max_DO":
             query_filters.append(_models.WaterQualityObservationDB.DO <= value)
+        
+        # exact DO
         elif key == "DO":
             query_filters.append(_models.WaterQualityObservationDB.DO == value)
+            
+        # Give's contaminants wherever the give contaminats are present
         elif key == "any_contaminants":
             contaminant_condition = or_(*[text(f"'{contaminant}' = ANY(contaminants)") for contaminant in value])
             query_filters.append(contaminant_condition)
+            
+        # Give's contaminant where the exact contaminants are present
         elif key == "contaminants":
             query_filters.append(_models.WaterQualityObservationDB.contaminants == value)
         else:
