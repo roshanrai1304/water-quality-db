@@ -1,7 +1,20 @@
 # water-quality-db
 
 The project is a backend api used for storing the observation's of water quality. The project is made by using fastpai, docker and the database used here is Postgres. The project is also deployed on EC2 instance and
-emulated using localstack. I have also used JWT Authentication, so the api's are protected.
+emulated using localstack. I have also used JWT Authentication, so the api's are protected. The type of data that I have stored is in the following format
+
+{
+"location": {"latitude": 40.712776, "longitude": -74.005974},
+"date_time": "2024-03-19T15:00:00Z",
+"description": "early afternoon water quality observation at Nehru
+Park",
+"parameters": {
+"pH": 7.4,
+"conductivity": 250,
+“DO”: 67,
+"contaminants": ["Lead", "Arsenic"]
+}
+}
 
 The execution of project is by following steps:
   1. Define the schema for the tables that would be used to store the observation and connect to the database
